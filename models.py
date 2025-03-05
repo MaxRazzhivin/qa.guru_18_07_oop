@@ -20,7 +20,7 @@ class Product:
         if self.check_quantity(quantity):
             self.quantity -= quantity
         else:
-            raise ValueError("Недостаточно товара на складе для покупки")
+            raise ValueError(f"Недостаточно {self} на складе для покупки")
 
     def __hash__(self):
         return hash(self.name + self.description)
@@ -62,8 +62,21 @@ class Cart:
 
     def buy(self):
 
-        for product, thing in self.products.items():
-            if product.quantity < thing:
-                raise ValueError('Недостаточно товара на складе для покупки')
-            else:
-                product.buy(thing)
+        insufficient_products = []
+
+        # Проверяем наличие всех продуктов в корзине
+        for product, quantity in self.products.items():
+            if not product.check_quantity(quantity):
+                insufficient_products.append((product, quantity))
+
+        # Если есть недостающие продукты, выбрасываем исключение
+        if insufficient_products:
+            raise ValueError(f'Недостаточно товаров на складе для покупки: {insufficient_products}')
+
+        # Если все продукты есть, списываем количество
+        for product, quantity in self.products.items():
+            product.buy(quantity)
+
+        # Очистка корзины после успешной покупки
+        self.clear()
+
