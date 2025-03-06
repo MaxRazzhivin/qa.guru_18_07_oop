@@ -123,4 +123,4 @@ class TestCart:
         cart.add_product(product, 1001)
         with pytest.raises(ValueError) as excinfo:
             cart.buy()
-        assert str(excinfo.value) == f'Недостаточно товаров на складе для покупки: [({product}, 1001)]'
+        assert str(excinfo.value) == f'Недостаточно товаров на складе для покупки: [{product} недостаточно: 1001]'

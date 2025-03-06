@@ -11,6 +11,9 @@ class Product:
         self.description = description
         self.quantity = quantity
 
+    def __str__(self):
+        return self.name
+
     def check_quantity(self, quantity) -> bool:
 
         return self.quantity >= quantity
@@ -71,7 +74,10 @@ class Cart:
 
         # Если есть недостающие продукты, выбрасываем исключение
         if insufficient_products:
-            raise ValueError(f'Недостаточно товаров на складе для покупки: {insufficient_products}')
+            # raise ValueError(f'Недостаточно товаров на складе для покупки: {insufficient_products}')
+            products_list = ', '.join(
+                f"{product} недостаточно: {quantity}" for product, quantity in insufficient_products)
+            raise ValueError(f'Недостаточно товаров на складе для покупки: [{products_list}]')
 
         # Если все продукты есть, списываем количество
         for product, quantity in self.products.items():
