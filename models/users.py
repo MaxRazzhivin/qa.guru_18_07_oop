@@ -45,6 +45,16 @@ class User:
     # def __repr__(self):
     #     return "User"
 
+class Worker(User):
+
+    status = Status.worker
+
+    def __init__(self, name, age, items):
+        self.name = name
+        self.age = age
+        self.items = items
+
+
 if __name__ == '__main__':
     # Oleg;16;student;book,pen,paper
     d = {"name": "Oleg",
@@ -55,6 +65,7 @@ if __name__ == '__main__':
     oleg = User(name="Oleg", age=16, status=Status.student, items=["book", "pen", "paper"])
     oleg2 = User(name="Oleg", age=16, status=Status.student, items=["book", "pen", "paper"])
     olga = User(name="Olga", age=18, status=Status.worker, items=["book", "paper"])
+    olga_worker = Worker(name="Olga", age=18, items=["book", "paper"])
 
     assert oleg == oleg2
 
@@ -63,5 +74,7 @@ if __name__ == '__main__':
 
     olga.age += 1
     assert olga.age == 19
+
+
 
 
