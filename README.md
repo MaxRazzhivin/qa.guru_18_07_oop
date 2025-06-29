@@ -347,7 +347,7 @@ def users() -> list[User]:
 ```
 
 
-# Еще мы можем сделать отдельный класс Worker, т.к. у него статус не должен меняться в отличие от User
+# 5. Еще мы можем сделать отдельный класс Worker, т.к. у него статус не должен меняться в отличие от User
 # Унаследуем его от User
 
 ```bash
@@ -380,4 +380,56 @@ def workers(users) -> list[Worker]:
                for user in users if user.status == Status.worker]
     return workers
 ```
-    
+
+# 6. Полиморфизм и создание файла providers.py с классом UserProvider. Суть в том, чтобы сделать один класс
+# Provider, которые описывает каким образом мы будет получать пользоваталей (БД, эксель, csv и т.д.)
+
+```bash
+Создаем файлик внутри директории models, называем providers и там разные классы для получения юзеров
+
+class UserProvider():
+
+    def get_users(self) -> list[User]:
+        raise NotImplementedError
+
+
+class CsvUserProvider(UserProvider):
+
+    def get_users(self) -> list[User]:
+        with open('users.csv') as f:
+            users = list(csv.DictReader(f, delimiter=";"))
+        return [
+            User(name=user["name"],
+                 age=int(user['age']),
+                 status=Status(user['status']),
+                 items=user['items'])
+            for user in users
+        ]
+
+
+class DatabaseUserProvider(UserProvider):
+
+    def get_users(self) -> list[User]:
+        pass
+
+
+class ApiUserProvider(UserProvider):
+
+    def get_users(self) -> list[User]:
+        pass
+
+```
+
+```bash
+Добавляем в тест фикстуру и меняется функция
+
+@pytest.fixture()
+def user_provider() -> UserProvider:
+    return CsvUserProvider()
+
+
+@pytest.fixture
+def users(user_provider) -> list[User]:
+    return user_provider.get_users()
+
+```

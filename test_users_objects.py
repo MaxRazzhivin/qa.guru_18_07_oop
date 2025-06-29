@@ -5,20 +5,17 @@ import csv
 
 import pytest
 
+from models.providers import UserProvider, CsvUserProvider
 from models.users import User, USER_ADULT_AGE, Status, Worker
+
+@pytest.fixture()
+def user_provider() -> UserProvider:
+    return CsvUserProvider()
 
 
 @pytest.fixture
-def users() -> list[User]:
-    with open('users.csv') as f:
-        users = list(csv.DictReader(f, delimiter=";"))
-    return [
-        User(name=user["name"],
-             age=int(user['age']),
-             status=Status(user['status']),
-             items=user['items'])
-        for user in users
-    ]
+def users(user_provider) -> list[User]:
+    return user_provider.get_users()
 
 
 @pytest.fixture
